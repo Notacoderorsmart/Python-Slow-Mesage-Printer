@@ -1,65 +1,49 @@
-import colorama
-from colorama import Fore, Style, Back, Cursor
-import os
 import time
 import msvcrt
-from colorama import just_fix_windows_console
 
-just_fix_windows_console()
+def print_slow(message):
+    """
+    Print a message to the terminal one character at a time, with a delay of
+    0.05 seconds between each character. The function wraps long lines to fit
+    the terminal width, and clears the screen before printing. If the user
+    presses a key during the printing, the function stops and waits for the user
+    to press another key.
 
-colorama.init()
+    Parameters   : message (str): The message to be printed.
 
-Red = Fore.RED
-green = Fore.GREEN
-os.system('cls')
+    Returns: None
+    """
+    # Print message
+    # Check if the message is a dictionary
+    if isinstance(message, dict):
+        # If it is, join the dictionary keys into a single string
+        message = ''.join(message)
 
-message = 'I cant believe it.This finally fucking works.After all this sodding time.'
-window_size = os.get_terminal_size()
-
-input('..')  # waits for user input before starting the function
-
-def print_slow():
-    # split the message into sentences and initialize counters
+    # Split the message into sentences using the period as the delimiter
     sentences = message.split('.')
-    chars_printed = 0
-    lines_printed = 2
-    
-    # iterate through each sentence and character in the message
-    for sentence in sentences:
-        for char in sentence:
-            print(char, end='', flush=True )  # print each character and flush the output
-            chars_printed += 1  # increment character counter
-            time.sleep(0.05)  # wait for a short period of time
-            if msvcrt.kbhit():  # check for keyboard input
-                key = msvcrt.getch()
-                break
-        else:
-            print()  # add newline after each sentence
-            lines_printed +=1  # increment line counter
-            chars_printed = 0  # reset character counter
-            continue
-        break  # break out of the loop if keyboard input is detected
-    
-    # print the remaining message in green, clearing previous output
-    print(Fore.GREEN)
-    print(colorama.Cursor.BACK(chars_printed))
-    for count in range(lines_printed):
-        print(colorama.Cursor.UP(2))
-        print(colorama.ansi.clear_line(), end='')
-    for sentence in sentences:
-        for char in sentence:
-            print(char, end='', flush=True )
-            if msvcrt.kbhit():
-                key = msvcrt.getch()
-                break
-        else:
-            print()  # add newline after each sentence
-            continue
-        break
-    
-    # print final line and deinitialize colorama
-    print(f'lines_printed = {lines_printed}')
-    print(f'chars_printed = {chars_printed}')
-    colorama.deinit()
 
-print_slow()
+    # Initialize the stop flag and time delay
+    stop = False
+    t = 0.05
+
+    # Iterate through each sentence in the list of sentences
+    for sentence in sentences:
+        # Iterate through each character in the current sentence
+        for char in sentence:
+            # Print the character without a newline and flush the output buffer
+            print(char, end='', flush=True)
+            # Increment the printed characters counter
+            printed_chars += 1
+            # Sleep for the specified time delay
+            time.sleep(t)
+            # Check if a key was pressed
+            if msvcrt.kbhit():
+                # If a key was pressed, set the stop flag to True
+                stop = True
+                # Retrieve the pressed key
+                msvcrt.getch()
+                # Set the time delay to 0
+                t = 0
+        # Print a newline character after printing all characters in the sentence
+        else:
+            print()
